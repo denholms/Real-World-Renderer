@@ -12,8 +12,9 @@
 #include <fstream>
 #include <algorithm>
 
-#define HM_SIZE_X	4
-#define HM_SIZE_Y	4
+#define HM_SIZE_X	40
+#define HM_SIZE_Y	40
+#define INDEX_SIZE	((2*HM_SIZE_X + 1)*(HM_SIZE_Y-1))
 #define NUM_ATTRIB 11
 
 std::string StringFromFile(const char* filename)
@@ -144,11 +145,40 @@ int main(int argc, char *argv[]) {
 
 	float fSizeX = 40.0f, fSizeZ = 40.0f;
 
+	/*GLfloat vertices[] = {
+	//X     Y      Z     R     G     B     U     V     NX    NY     NZ
+	//Ar
+	-1.2f, 1.2f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  //ARA
+	-0.4f, 1.2f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid3A
+	0.4f, 1.2f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid1B
+	1.2f, 1.2f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,//ARB
+
+	-1.2f, 0.4f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//A1A
+	-0.4f, 0.4f, 0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//A1B
+	0.4f, 0.4f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid1A
+	1.2f, 0.4f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid1B
+
+	-1.2f, -0.4f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid2A
+	-0.4f, -0.4f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid2B
+	0.4f, -0.4f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid3B
+	1.2f, -0.4f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid4A
+
+	-1.2f, -1.2f, -0.6f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid4B
+	-0.4f, -1.2f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid5A
+	0.4f, -1.2f, -0.6f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//Mid5B
+	1.2f, -1.2f, -0.6f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,//Mid6A
+	};*/
+
+	/*vHeightmapData[i] = glm::vec3(
+	-fSizeX / 2 + fSizeX*x / float(HM_SIZE_X - 1),
+	fHeights[i],
+	-fSizeZ / 2 + fSizeZ*z / float(HM_SIZE_Y - 1)
+	);*/
 	for (int i = 0; i < HM_SIZE_X * HM_SIZE_Y; i++) {
 		float x = float(i%HM_SIZE_X), z = float(i / HM_SIZE_X);
 		int k = i * 11;
 		vertices[k++] = -fSizeX / 2 + fSizeX*x / float(HM_SIZE_X - 1);		//X
-		vertices[k++] = fHeights[i];										//Y
+		vertices[k++] = 0;//fHeights[i];										//Y
 		vertices[k++] = -fSizeZ / 2 + fSizeZ*z / float(HM_SIZE_Y - 1);		//Z
 		vertices[k++] = 1.0f;												//R
 		vertices[k++] = 1.0f;												//G
@@ -158,30 +188,35 @@ int main(int argc, char *argv[]) {
 		vertices[k++] = 0.0f;												//NX
 		vertices[k++] = 0.0f;												//NY
 		vertices[k++] = 0.0f;												//NZ
-		/*vHeightmapData[i] = glm::vec3(
-			-fSizeX / 2 + fSizeX*x / float(HM_SIZE_X - 1),
-			fHeights[i],
-			-fSizeZ / 2 + fSizeZ*z / float(HM_SIZE_Y - 1)
-		);*/
 	}
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*HM_SIZE_X*HM_SIZE_Y, vHeightmapData, GL_STATIC_DRAW);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*HM_SIZE_X*HM_SIZE_Y*NUM_ATTRIB, vertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 11, GL_FLOAT, GL_FALSE, 0, 0);
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	GLuint uiVBOIndices;
 	glGenBuffers(1, &uiVBOIndices);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, uiVBOIndices);
-	int iIndices[] = {
-		0, 4, 1, 5, 2, 6, 3, 7, 16,
-		4, 8, 5, 9, 6, 10, 7, 11, 16,
-		8, 12, 9, 13, 10, 14, 11, 15
-	};
+
+	int iIndices[INDEX_SIZE];
+
+	int count = 0;
+	for (int j = 0; j < HM_SIZE_Y - 1; j++) {
+		for (int i = 0; i < 2*HM_SIZE_X; i+=2) {
+			iIndices[count++] = (j*HM_SIZE_X + i / 2);
+			iIndices[count++] = ((j+1)*HM_SIZE_X + i/2);
+		}
+		iIndices[count++] = -1;
+	}
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iIndices), iIndices, GL_STATIC_DRAW);
 	glEnable(GL_PRIMITIVE_RESTART);
-	glPrimitiveRestartIndex(HM_SIZE_X*HM_SIZE_Y);
+	glPrimitiveRestartIndex(-1);
 
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // Copy over vertex data
+	/*int iIndices[] = {
+	0, 4, 1, 5, 2, 6, 3, 7, -1,
+	4, 8, 5, 9, 6, 10, 7, 11, -1,
+	8, 12, 9, 13, 10, 14, 11, 15
+	};*/
 
 	// -- Setup drawing attributes --
 	//Input, # values (# components of vec), type of component, bool for -1 -> 1 normalized,
@@ -227,41 +262,21 @@ int main(int argc, char *argv[]) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	*/
-
-	/*glm::mat4 mModelView = glm::lookAt(glm::vec3(0, 60, 30), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 mCurrent = glm::rotate(mModelView, 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	GLint uniModel = glGetUniformLocation(program, "model");
-
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(mCurrent));
-	glBindVertexArray(vao);
-	//glDrawElements(GL_TRIANGLE_STRIP, HM_SIZE_X*(HM_SIZE_Y - 1) * 2 + (HM_SIZE_Y - 2), GL_UNSIGNED_INT, 0);
-
-	while (true) {
-	//Clear screen to black
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-	glDrawElements(GL_TRIANGLE_STRIP, HM_SIZE_X*(HM_SIZE_Y - 1) * 2 + (HM_SIZE_Y - 2), GL_UNSIGNED_INT, 0);
-
-	//Swap buffers
-	SDL_GL_SwapWindow(window);
-	}*/
-
 	
 	//Model matrix
 	GLint uniModel = glGetUniformLocation(program, "model");
 
 	//View matrix
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(2.5f, 2.5f, 2.5f),		//Position of camera
-		glm::vec3(0.0f, 0.0f, 0.0f),		//Point centered on screen
-		glm::vec3(0.0f, 0.0f, 1.0f)			//Up axis (x,y is the ground)
+		glm::vec3(2.5f, 2.5f, 80.0f),			//Position of camera
+		glm::vec3(0.0f, 0.0f, 0.0f),			//Point centered on screen
+		glm::vec3(0.0f, 0.0f, 1.0f)				//Up axis (x,y is the ground)
 		);
 	GLint uniView = glGetUniformLocation(program, "view");
 	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
 
 	//Projection matrix: vertical FOV, aspect ratio, near plane, far plane (for clipping)
-	glm::mat4 proj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 100.0f);
 	GLint uniProj = glGetUniformLocation(program, "proj");
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
@@ -333,12 +348,8 @@ int main(int argc, char *argv[]) {
 		model = glm::rotate(model, zMovement * glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
-		//Trolly Transformation
-		glm::mat4 proj = glm::perspective(yMovement * glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 10.0f);
-		GLint uniProj = glGetUniformLocation(program, "proj");
-		glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
-
 		//Draw
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawElements(GL_TRIANGLE_STRIP, HM_SIZE_X*(HM_SIZE_Y - 1) * 2 + (HM_SIZE_Y - 2), GL_UNSIGNED_INT, 0);
 
 		/*
@@ -392,6 +403,7 @@ int main(int argc, char *argv[]) {
 	glDeleteShader(fs);
 	glDeleteShader(vs);
 	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &uiVBOIndices);
 	glDeleteVertexArrays(1, &vao);
 
 	SDL_GL_DeleteContext(context);
