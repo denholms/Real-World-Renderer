@@ -25,5 +25,5 @@ void main()
 	Color = overrideColor * color;
 	//Color = overrideColor * vec4(position, 1.0);
 	Texcoord = texcoord;
-	gl_Position = proj * modelView * vec4(position.x, position.y + texVal, position.z , 1.0);
+	gl_Position = proj * modelView * vec4(position.x, (position.y + texVal) * 5, position.z , 1.0);
 }

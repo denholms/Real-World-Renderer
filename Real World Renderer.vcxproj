@@ -44,12 +44,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\SDL2-devel-2.0.4-VC\SDL2-2.0.4\include;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glew-1.13.0\include;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\SDL2-devel-2.0.4-VC\SDL2-2.0.4\include;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glew-1.13.0\include;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glm;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\Noise\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glew-1.13.0\lib\Release\Win32;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\SDL2-devel-2.0.4-VC\SDL2-2.0.4\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glew-1.13.0\lib\Release\Win32;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\SDL2-devel-2.0.4-VC\SDL2-2.0.4\lib\x86;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\Noise\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;glew32s.lib;libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -60,14 +61,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\SDL2-devel-2.0.4-VC\SDL2-2.0.4\include;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glew-1.13.0\include;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\SDL2-devel-2.0.4-VC\SDL2-2.0.4\include;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glew-1.13.0\include;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glm;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\Noise\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glew-1.13.0\lib\Release\Win32;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\SDL2-devel-2.0.4-VC\SDL2-2.0.4\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\glew-1.13.0\lib\Release\Win32;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\SDL2-devel-2.0.4-VC\SDL2-2.0.4\lib\x86;D:\Documents\School\Summer 2016\CSC 305 - Intro. to Computer Graphics\Noise\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;glew32s.lib;libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -77,6 +78,9 @@
   <ItemGroup>
     <Text Include="scene.frag" />
     <Text Include="scene.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pixel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
