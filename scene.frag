@@ -30,5 +30,5 @@ void main()
 		specular = pow(specAngle, shininess/4.0);
 	}
 	vec3 colorLinear = ambientColor + lambertian * diffuseColor + specular * specColor + Color;
-	outColor = texture(tex, Texcoord) * vec4(colorLinear, 1.0);
+	outColor = texture(tex, Texcoord);// * vec4(colorLinear, 1.0);
 }

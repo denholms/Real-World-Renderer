@@ -11,11 +11,30 @@
 #include <stdio.h>
 #include <fstream>
 #include <algorithm>
+#include <math.h>
+#include <noise/noise.h>
+#include <iostream>
+#include "pixel.h"
 
-#define HM_SIZE_X	40
-#define HM_SIZE_Y	40
+using namespace noise;
+
+#define HM_SIZE_X	100
+#define HM_SIZE_Y	100
 #define INDEX_SIZE	((2*HM_SIZE_X + 1)*(HM_SIZE_Y-1))
 #define NUM_ATTRIB 11
+
+module::Perlin gen;
+// Rescale from -1.0:+1.0 to 0.0:1.0
+double pNoise(double nx, double ny, int octave, double elevation) {
+	double returnVal = 0.0;
+
+	for (int i = 1; i < octave + 1; i++) {
+		returnVal += (1.0 / i) * (gen.GetValue(i * nx, i * ny, 0) / 2.0 + 0.5);
+	}
+
+	return std::min(pow(returnVal, elevation), 1.0);
+	//return pow(returnVal, elevation);
+}	
 
 std::string StringFromFile(const char* filename)
 {
@@ -174,20 +193,24 @@ int main(int argc, char *argv[]) {
 	fHeights[i],
 	-fSizeZ / 2 + fSizeZ*z / float(HM_SIZE_Y - 1)
 	);*/
-	for (int i = 0; i < HM_SIZE_X * HM_SIZE_Y; i++) {
-		float x = float(i%HM_SIZE_X), z = float(i / HM_SIZE_X);
-		int k = i * 11;
-		vertices[k++] = -fSizeX / 2 + fSizeX*x / float(HM_SIZE_X - 1);		//X
-		vertices[k++] = 0;//fHeights[i];										//Y
-		vertices[k++] = -fSizeZ / 2 + fSizeZ*z / float(HM_SIZE_Y - 1);		//Z
-		vertices[k++] = 1.0f;												//R
-		vertices[k++] = 1.0f;												//G
-		vertices[k++] = 0.0f;												//B
-		vertices[k++] = 0.0f;												//U
-		vertices[k++] = 0.0f;												//V
-		vertices[k++] = 0.0f;												//NX
-		vertices[k++] = 0.0f;												//NY
-		vertices[k++] = 0.0f;												//NZ
+
+	for (int i = 0; i < HM_SIZE_X; i++) {
+		for (int j = 0; j < HM_SIZE_Y; j++){
+			float x = float((i*HM_SIZE_Y + j) % HM_SIZE_X);
+			float z = float((i*HM_SIZE_Y + j) / HM_SIZE_X);
+			int k = (i*HM_SIZE_Y + j) * 11;
+			vertices[k++] = -fSizeX / 2 + fSizeX*x / float(HM_SIZE_X - 1);		//X
+			vertices[k++] = 0;													//Y
+			vertices[k++] = -fSizeZ / 2 + fSizeZ*z / float(HM_SIZE_Y - 1);		//Z
+			vertices[k++] = 1.0f;												//R
+			vertices[k++] = 1.0f;												//G
+			vertices[k++] = 0.0f;												//B
+			vertices[k++] = (float)i / (float) HM_SIZE_X;						//U
+			vertices[k++] = (float)j / (float) HM_SIZE_Y;						//V
+			vertices[k++] = 0.0f;												//NX
+			vertices[k++] = 0.0f;												//NY
+			vertices[k++] = 0.0f;												//NZ
+		}
 	}
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*HM_SIZE_X*HM_SIZE_Y, vHeightmapData, GL_STATIC_DRAW);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*HM_SIZE_X*HM_SIZE_Y*NUM_ATTRIB, vertices, GL_STATIC_DRAW);
@@ -246,11 +269,26 @@ int main(int argc, char *argv[]) {
 
 
 	//Texture
-	/*
 	GLuint tex;
+	GLfloat pNoiseArray[HM_SIZE_Y * HM_SIZE_X];
+
+	for (int x = 0; x < HM_SIZE_X; x++) {
+		for (int y = 0; y < HM_SIZE_Y; y++) {
+			double nx = ((float)x / (float)HM_SIZE_X) - 0.5, ny = ((float)y / (float)HM_SIZE_Y) - 0.5;
+			pNoiseArray[(x*HM_SIZE_Y) + y] = pNoise(3.00 * nx, 3.00* ny, 2, 2.0);
+		}
+	}
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, HM_SIZE_X, HM_SIZE_Y, 0, GL_RED, GL_UNSIGNED_BYTE, pNoiseArray);
 
+	//Texture filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
+
+	/*
 	int width, height;
 	unsigned char* image = SOIL_load_image("img.jpg", &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
@@ -268,7 +306,7 @@ int main(int argc, char *argv[]) {
 
 	//View matrix
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(2.5f, 2.5f, 80.0f),			//Position of camera
+		glm::vec3(2.5f, 2.5f, 30.0f),			//Position of camera
 		glm::vec3(0.0f, 0.0f, 0.0f),			//Point centered on screen
 		glm::vec3(0.0f, 0.0f, 1.0f)				//Up axis (x,y is the ground)
 		);
@@ -349,7 +387,7 @@ int main(int argc, char *argv[]) {
 		glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
 		//Draw
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLE_STRIP, HM_SIZE_X*(HM_SIZE_Y - 1) * 2 + (HM_SIZE_Y - 2), GL_UNSIGNED_INT, 0);
 
 		/*
