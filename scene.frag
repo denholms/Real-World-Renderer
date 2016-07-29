@@ -10,6 +10,9 @@ out vec4 outColor;
 uniform sampler2D tex;
 uniform sampler2D grassTex;
 uniform sampler2D rockTex;
+uniform sampler2D sandTex;
+uniform sampler2D snowTex;
+uniform sampler2D waterTex;
 
 const vec3 lightPos = vec3(1.0,1.0,1.0);
 const vec3 ambientColor = vec3(0.2,0.0,0.0);
@@ -33,9 +36,15 @@ void main()
 		specular = pow(specAngle, shininess/4.0);
 	}
 	vec3 colorLinear = ambientColor + lambertian * diffuseColor + specular * specColor + Color;
-	if (Position.y > 0.8) {
+	if (Position.y > 4.5) {
+		outColor = texture(snowTex, Texcoord);
+	} else if (Position.y > 2) {
 		outColor = texture(rockTex, Texcoord);		 // * vec4(colorLinear, 1.0);
-	} else {
+	} else if (Position.y > 1.5) {
 		outColor = texture(grassTex, Texcoord);
+	} else if (Position.y > 1) {
+		outColor = texture(sandTex, Texcoord);
+	} else {
+		outColor = texture(waterTex, Texcoord);
 	}
 }

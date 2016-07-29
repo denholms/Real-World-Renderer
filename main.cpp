@@ -19,8 +19,8 @@
 
 using namespace noise;
 
-#define HM_SIZE_X		50
-#define HM_SIZE_Y		50
+#define HM_SIZE_X		100
+#define HM_SIZE_Y		100
 #define PERLIN_TEX_SIZE	200
 #define INDEX_SIZE		((2*HM_SIZE_X + 1)*(HM_SIZE_Y-1))
 #define NUM_ATTRIB		11
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
 		4.0f, 6.0f, 8.0f, 3.0f
 	};
 
-	float fSizeX = 40.0f, fSizeZ = 40.0f;
+	float fSizeX = 100.0f, fSizeZ = 100.0f;
 
 	/*GLfloat vertices[] = {
 	//X     Y      Z     R     G     B     U     V     NX    NY     NZ
@@ -281,20 +281,26 @@ int main(int argc, char *argv[]) {
 	for (int x = 0; x < PERLIN_TEX_SIZE; x++) {
 		for (int y = 0; y < PERLIN_TEX_SIZE; y++) {
 			double nx = ((float)x / (float)PERLIN_TEX_SIZE) - 0.5, ny = ((float)y / (float)PERLIN_TEX_SIZE) - 0.5;
-			pNoiseArray[(x*PERLIN_TEX_SIZE) + y] = pNoise(nx, ny, 2, 4.0);
+			pNoiseArray[(x*PERLIN_TEX_SIZE) + y] = pNoise(5*nx, 5*ny, 2, 3.0);
 		}
 	}
 
 	//Textures
 	int width, height;
-	GLuint textureID[3];
-	glGenTextures(3, textureID);
+	GLuint textureID[6];
+	glGenTextures(6, textureID);
 	GLint texLoc = glGetUniformLocation(program, "tex");				//Perlin texture (color changes height in vShader)
 	GLint grassTexLoc = glGetUniformLocation(program, "grassTex");		//Grass texture (color used in fragShader)
 	GLint rockTexLoc = glGetUniformLocation(program, "rockTex");
+	GLint sandTexLoc = glGetUniformLocation(program, "sandTex");
+	GLint snowTexLoc = glGetUniformLocation(program, "snowTex");
+	GLint waterTexLoc = glGetUniformLocation(program, "waterTex");
 	glUniform1i(texLoc, 0);
 	glUniform1i(grassTexLoc, 1);
 	glUniform1i(rockTexLoc, 2);
+	glUniform1i(sandTexLoc, 3);
+	glUniform1i(snowTexLoc, 4);
+	glUniform1i(waterTexLoc, 5);
 
 	//Perlin Texture
 	glActiveTexture(GL_TEXTURE0);
@@ -324,13 +330,43 @@ int main(int argc, char *argv[]) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	unsigned char* RockTex = SOIL_load_image("RockTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, RockTex);
+
+	//Sand Texture
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, textureID[3]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
+	unsigned char* SandTex = SOIL_load_image("SandTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, SandTex);
+
+	//Snow Texture
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, textureID[4]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
+	unsigned char* SnowTex = SOIL_load_image("SnowTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, SnowTex);
+
+	//Water Texture
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, textureID[5]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
+	unsigned char* WaterTex = SOIL_load_image("WaterTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, WaterTex);
 	
 	//Model matrix
 	GLint uniModel = glGetUniformLocation(program, "model");
 
 	//View matrix
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(2.5f, 2.5f, 40.0f),			//Position of camera
+		glm::vec3(2.5f, 2.5f, 60.0f),			//Position of camera
 		glm::vec3(0.0f, 0.0f, 0.0f),			//Point centered on screen
 		glm::vec3(0.0f, 0.0f, 1.0f)				//Up axis (x,y is the ground)
 		);
