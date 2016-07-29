@@ -7,6 +7,7 @@ in vec3 vertPos;
 out vec4 outColor;
 
 uniform sampler2D tex;
+uniform sampler2D grassTex;
 
 const vec3 lightPos = vec3(1.0,1.0,1.0);
 const vec3 ambientColor = vec3(0.2,0.0,0.0);
@@ -30,5 +31,5 @@ void main()
 		specular = pow(specAngle, shininess/4.0);
 	}
 	vec3 colorLinear = ambientColor + lambertian * diffuseColor + specular * specColor + Color;
-	outColor = texture(tex, Texcoord); // * vec4(colorLinear, 1.0);
+	outColor = texture(grassTex, Texcoord); // * vec4(colorLinear, 1.0);
 }

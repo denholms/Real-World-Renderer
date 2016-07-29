@@ -1,6 +1,7 @@
 #define GLEW_STATIC
 
 #include <gl/glew.h>
+#include <SOIL.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <glm/glm.hpp>
@@ -25,6 +26,7 @@ using namespace noise;
 #define NUM_ATTRIB		11
 
 module::Perlin gen;
+
 // Rescale from -1.0:+1.0 to 0.0:1.0
 float pNoise(double nx, double ny, int octave, double elevation) {
 	double returnVal = 0.0;
@@ -273,8 +275,7 @@ int main(int argc, char *argv[]) {
 	glVertexAttribPointer(normAttrib, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (void *)(8 * sizeof(GLfloat)));
 
 
-	//Texture
-	GLuint tex;
+	//Generate Perlin Texture
 	GLfloat pNoiseArray[200 * 200];
 
 	for (int x = 0; x < PERLIN_TEX_SIZE; x++) {
@@ -283,35 +284,39 @@ int main(int argc, char *argv[]) {
 			pNoiseArray[(x*PERLIN_TEX_SIZE) + y] = pNoise(nx, ny, 2, 4.0);
 		}
 	}
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
+
+	//Textures
+	int width, height;
+	GLuint textureID[2];
+	glGenTextures(2, textureID);
+	GLint texLoc = glGetUniformLocation(program, "tex");				//Perlin texture (color changes height in vShader)
+	GLint grassTexLoc = glGetUniformLocation(program, "grassTex");		//Grass texture (color used in fragShader)
+	glUniform1i(texLoc, 0);
+	glUniform1i(grassTexLoc, 1);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, PERLIN_TEX_SIZE, PERLIN_TEX_SIZE, 0, GL_RED, GL_FLOAT, pNoiseArray);
 
-	//Texture filtering
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureID[1]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
-
-	/*
-	int width, height;
-	unsigned char* image = SOIL_load_image("img.jpg", &width, &height, 0, SOIL_LOAD_RGB);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	SOIL_free_image_data(image);
-
-	//Texture filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
-	*/
+	unsigned char* GrassTex = SOIL_load_image("GrassTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, GrassTex);
 	
 	//Model matrix
 	GLint uniModel = glGetUniformLocation(program, "model");
 
 	//View matrix
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(2.5f, 2.5f, 30.0f),			//Position of camera
+		glm::vec3(2.5f, 2.5f, 40.0f),			//Position of camera
 		glm::vec3(0.0f, 0.0f, 0.0f),			//Point centered on screen
 		glm::vec3(0.0f, 0.0f, 1.0f)				//Up axis (x,y is the ground)
 		);

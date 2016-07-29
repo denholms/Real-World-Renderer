@@ -12,11 +12,12 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
 uniform vec3 overrideColor;
+
 uniform sampler2D tex;
 
 void main()
 {
-	float texVal = texture(tex, texcoord).r;
+	
 	mat4 modelView = view * model;
 	mat4 normalMatrix = transpose(inverse(modelView));
 	vec4 vertPos4 = modelView * vec4(position, 1.0);
@@ -25,5 +26,6 @@ void main()
 	Color = overrideColor * color;
 	//Color = overrideColor * vec4(position, 1.0);
 	Texcoord = texcoord;
+	float texVal = texture(tex, texcoord).r;
 	gl_Position = proj * modelView * vec4(position.x, (position.y + texVal) * 5, position.z , 1.0);
 }
