@@ -3,11 +3,13 @@ in vec3 Color;
 in vec2 Texcoord;
 in vec3 normalInterp;
 in vec3 vertPos;
+in vec3 Position;
 
 out vec4 outColor;
 
 uniform sampler2D tex;
 uniform sampler2D grassTex;
+uniform sampler2D rockTex;
 
 const vec3 lightPos = vec3(1.0,1.0,1.0);
 const vec3 ambientColor = vec3(0.2,0.0,0.0);
@@ -31,5 +33,9 @@ void main()
 		specular = pow(specAngle, shininess/4.0);
 	}
 	vec3 colorLinear = ambientColor + lambertian * diffuseColor + specular * specColor + Color;
-	outColor = texture(grassTex, Texcoord); // * vec4(colorLinear, 1.0);
+	if (Position.y > 0.8) {
+		outColor = texture(rockTex, Texcoord);		 // * vec4(colorLinear, 1.0);
+	} else {
+		outColor = texture(grassTex, Texcoord);
+	}
 }

@@ -7,6 +7,7 @@ out vec3 Color;
 out vec2 Texcoord;
 out vec3 normalInterp;
 out vec3 vertPos;
+out vec3 Position;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -27,5 +28,6 @@ void main()
 	//Color = overrideColor * vec4(position, 1.0);
 	Texcoord = texcoord;
 	float texVal = texture(tex, texcoord).r;
-	gl_Position = proj * modelView * vec4(position.x, (position.y + texVal) * 5, position.z , 1.0);
+	Position = vec3(position.x, (position.y + texVal)*5, position.z);
+	gl_Position = proj * modelView * vec4(position.x, (position.y + texVal)*5, position.z , 1.0);
 }

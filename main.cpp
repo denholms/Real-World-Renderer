@@ -287,13 +287,16 @@ int main(int argc, char *argv[]) {
 
 	//Textures
 	int width, height;
-	GLuint textureID[2];
-	glGenTextures(2, textureID);
+	GLuint textureID[3];
+	glGenTextures(3, textureID);
 	GLint texLoc = glGetUniformLocation(program, "tex");				//Perlin texture (color changes height in vShader)
 	GLint grassTexLoc = glGetUniformLocation(program, "grassTex");		//Grass texture (color used in fragShader)
+	GLint rockTexLoc = glGetUniformLocation(program, "rockTex");
 	glUniform1i(texLoc, 0);
 	glUniform1i(grassTexLoc, 1);
+	glUniform1i(rockTexLoc, 2);
 
+	//Perlin Texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
@@ -302,6 +305,7 @@ int main(int argc, char *argv[]) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, PERLIN_TEX_SIZE, PERLIN_TEX_SIZE, 0, GL_RED, GL_FLOAT, pNoiseArray);
 
+	//Grass Texture
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textureID[1]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
@@ -310,6 +314,16 @@ int main(int argc, char *argv[]) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	unsigned char* GrassTex = SOIL_load_image("GrassTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, GrassTex);
+
+	//Rock Texture
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, textureID[2]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
+	unsigned char* RockTex = SOIL_load_image("RockTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, RockTex);
 	
 	//Model matrix
 	GLint uniModel = glGetUniformLocation(program, "model");
