@@ -36,15 +36,15 @@ void main()
 		specular = pow(specAngle, shininess/4.0);
 	}
 	vec3 colorLinear = ambientColor + lambertian * diffuseColor + specular * specColor + Color;
-	if (Position.y > 4.5) {
-		outColor = texture(snowTex, Texcoord);
-	} else if (Position.y > 2) {
-		outColor = texture(rockTex, Texcoord);		 // * vec4(colorLinear, 1.0);
+	if (Position.y > 7.5) {
+		outColor = texture(snowTex, Texcoord * 5);
+	} else if (Position.y > 4) {
+		outColor = texture(rockTex, Texcoord * 5);		 // * vec4(colorLinear, 1.0);
+	} else if (Position.y > 2.5) {
+		outColor = texture(grassTex, Texcoord * 5);
 	} else if (Position.y > 1.5) {
-		outColor = texture(grassTex, Texcoord);
-	} else if (Position.y > 1) {
-		outColor = texture(sandTex, Texcoord);
+		outColor = texture(sandTex, Texcoord * 5);
 	} else {
-		outColor = texture(waterTex, Texcoord);
+		outColor = texture(waterTex, Texcoord * 5);
 	}
 }

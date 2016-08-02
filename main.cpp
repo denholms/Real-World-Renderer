@@ -28,10 +28,10 @@ using namespace noise;
 module::Perlin gen;
 
 // Rescale from -1.0:+1.0 to 0.0:1.0
-float pNoise(double nx, double ny, int octave, double elevation) {
-	double returnVal = 0.0;
-	double amplitude = 1.0;
-	double frequency = 1.0;
+float pNoise(float nx, float ny, int octave, float elevation) {
+	float returnVal = 0.0;
+	float amplitude = 1.0;
+	float frequency = 1.0;
 
 	for (int i = 0; i < octave; i++) {
 		returnVal += amplitude * (gen.GetValue(frequency * nx, frequency * ny, 0) / 2.0 + 0.5);
@@ -280,8 +280,8 @@ int main(int argc, char *argv[]) {
 
 	for (int x = 0; x < PERLIN_TEX_SIZE; x++) {
 		for (int y = 0; y < PERLIN_TEX_SIZE; y++) {
-			double nx = ((float)x / (float)PERLIN_TEX_SIZE) - 0.5, ny = ((float)y / (float)PERLIN_TEX_SIZE) - 0.5;
-			pNoiseArray[(x*PERLIN_TEX_SIZE) + y] = pNoise(5*nx, 5*ny, 2, 3.0);
+			float nx = ((float)x / (float)PERLIN_TEX_SIZE) - 0.5, ny = ((float)y / (float)PERLIN_TEX_SIZE) - 0.5;
+			pNoiseArray[(x*PERLIN_TEX_SIZE) + y] = pNoise(5*nx, 5*ny, 2, 5.0);
 		}
 	}
 
@@ -314,8 +314,8 @@ int main(int argc, char *argv[]) {
 	//Grass Texture
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textureID[1]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	// Texture Y
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	unsigned char* GrassTex = SOIL_load_image("GrassTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
@@ -324,8 +324,8 @@ int main(int argc, char *argv[]) {
 	//Rock Texture
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, textureID[2]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	// Texture Y
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	unsigned char* RockTex = SOIL_load_image("RockTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
@@ -334,8 +334,8 @@ int main(int argc, char *argv[]) {
 	//Sand Texture
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, textureID[3]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	// Texture Y
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	unsigned char* SandTex = SOIL_load_image("SandTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
@@ -344,8 +344,8 @@ int main(int argc, char *argv[]) {
 	//Snow Texture
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, textureID[4]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	// Texture Y
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	unsigned char* SnowTex = SOIL_load_image("SnowTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
@@ -354,8 +354,8 @@ int main(int argc, char *argv[]) {
 	//Water Texture
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, textureID[5]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Texture X
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// Texture Y
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Texture X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	// Texture Y
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// Scaled down
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// Scale up
 	unsigned char* WaterTex = SOIL_load_image("WaterTex.jpg", &width, &height, 0, SOIL_LOAD_RGB);
@@ -366,7 +366,7 @@ int main(int argc, char *argv[]) {
 
 	//View matrix
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(2.5f, 2.5f, 60.0f),			//Position of camera
+		glm::vec3(2.5f, 2.5f, 70.0f),			//Position of camera
 		glm::vec3(0.0f, 0.0f, 0.0f),			//Point centered on screen
 		glm::vec3(0.0f, 0.0f, 1.0f)				//Up axis (x,y is the ground)
 		);

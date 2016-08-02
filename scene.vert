@@ -28,6 +28,6 @@ void main()
 	//Color = overrideColor * vec4(position, 1.0);
 	Texcoord = texcoord;
 	float texVal = texture(tex, texcoord).r;
-	Position = vec3(position.x, (position.y + texVal)*5, position.z);
-	gl_Position = proj * modelView * vec4(position.x, (position.y + texVal)*5, position.z , 1.0);
+	Position = vec3(position.x, (position.y + texVal)*8.0, position.z);
+	gl_Position = proj * modelView * vec4(position.x, (position.y + texVal)*8.0, position.z , 1.0);
 }
